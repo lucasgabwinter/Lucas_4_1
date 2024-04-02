@@ -1,20 +1,34 @@
 import { StyleSheet, ImageBackground, SafeAreaView } from 'react-native';
 import StartGameScreen from './screens/StartGameScreen';
 import GameScreen from './screens/GameScreen';
+import GameOverScreen from './screens/GameOverScreen';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
 import Colors from './constants/colors';
 
 export default function App() {
   const [userNumber, setUserNumber] = useState();
+  const [gameIsOver, setGameIsOver] = useState(true);
+
+  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
 
   function pickedNumberHandler(pickedNumber) {
     setUserNumber(pickedNumber);
+    setGameIsOver(false);
   }
-  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
-  if (userNumber) {
-    screen = <GameScreen />;
+
+  function gameOverHandler() {
+    setGameIsOver(true);
   }
+
+  if (gameIsOver && userNumber) {
+    screen = <GameOverScreen />;
+  } else if (userNumber) {
+    screen = (
+      <GameScreen userNumber={userNumber} onGameOver={gameOverHandler} />
+    );
+  }
+
   return (
     <LinearGradient
       colors={[Colors.primary500, Colors.primary700]}
